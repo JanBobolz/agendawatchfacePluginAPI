@@ -21,7 +21,7 @@ public class AgendaItem implements Comparable<AgendaItem> {
 	 */
 	public static class Line {
 		/**
-		 * The text for this line. Will be truncated if too long May be null
+		 * The text for this line. Will be truncated if too long. May be null
 		 */
 		public String text = "";
 

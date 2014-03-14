@@ -39,6 +39,7 @@ public abstract class AgendaWatchfacePlugin extends BroadcastReceiver {
 	public static final String MAIN_SERVICE_INTENT_EXTRA_PLUGIN_VERSION = "de.janbo.agendawatchface.intent.extra.pluginprotocolversion";
 	public static final String MAIN_SERVICE_INTENT_ACTION_ACCEPT_DATA = "de.janbo.agendawatchface.intent.action.acceptdata";
 	public static final String MAIN_SERVICE_INTENT_EXTRA_DATA = "de.janbo.agendawatchface.intent.extra.plugindata";
+	public static final String MAIN_SERVICE_INTENT_EXTRA_VIBRATE = "de.janbo.agendawatchface.intent.extra.vibrateflag";
 
 	
 	/**
@@ -93,8 +94,9 @@ public abstract class AgendaWatchfacePlugin extends BroadcastReceiver {
 	 * You may supply as many items as you like (although more than 10 would not make sense, since the watch (as of this writing) only displays at most 10 items)
 	 * @param context Some Context (e.g., as supplied in onRefreshRequest() or get one by getApplicationContext() in an Activity/Service)
 	 * @param items the list of items you want to publish. Will replace any previously published data
+	 * @param vibrate if set to true, the watch will vibrate after these items have been synchronized. Has no effect if the data didn't change (note that the AgendaWatchfaceService's data can sometimes be reset (e.g., every time the Android app is entered), so don't spam it
 	 */
-	public void publishData(Context context, List<AgendaItem> items) {
+	public void publishData(Context context, List<AgendaItem> items, boolean vibrate) {
 		if (items == null)
 			items = new ArrayList<AgendaItem>();
 		
@@ -108,6 +110,7 @@ public abstract class AgendaWatchfacePlugin extends BroadcastReceiver {
 		for (int i=0; i<items.size();i++)
 			parcelItems[i] = items.get(i).toBundle();
 		dataIntent.putExtra(MAIN_SERVICE_INTENT_EXTRA_DATA, parcelItems);
+		dataIntent.putExtra(MAIN_SERVICE_INTENT_EXTRA_VIBRATE, vibrate);
 
 		context.startService(dataIntent);
 	}
