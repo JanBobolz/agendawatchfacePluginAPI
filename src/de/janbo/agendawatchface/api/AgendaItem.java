@@ -29,6 +29,11 @@ public class AgendaItem implements Comparable<AgendaItem> {
 		 * Whether or not to bold the text (time is never bold).
 		 */
 		public boolean textBold = false;
+		
+		/**
+		 * Determines how to handle long texts on this line (e.g., double line height if necessary)
+		 */
+		public LineOverflowBehavior overflow = LineOverflowBehavior.OVERFLOW_IF_NECESSARY;
 
 		/**
 		 * Formatting for the time to display. 
@@ -47,6 +52,8 @@ public class AgendaItem implements Comparable<AgendaItem> {
 
 			result.putString("text", text);
 			result.putBoolean("textBold", textBold);
+			if (overflow != null)
+				result.putInt("overflow", overflow.ordinal());
 			if (timeDisplay != null)
 				result.putInt("timeDisplay", timeDisplay.ordinal());
 			if (timeShowCountdown != null)
@@ -76,24 +83,22 @@ public class AgendaItem implements Comparable<AgendaItem> {
 					text = bundle.getString("text");
 				if (bundle.containsKey("textBold"))
 					textBold = bundle.getBoolean("textBold");
+				if (bundle.containsKey("overflow"))
+					overflow = LineOverflowBehavior.values()[bundle.getInt("overflow")];
 				if (bundle.containsKey("timeDisplay"))
 					timeDisplay = TimeDisplayType.values()[bundle.getInt("timeDisplay")];
 				if (bundle.containsKey("timeShowCountdown"))
 					timeShowCountdown = bundle.getBoolean("timeShowCountdown");
 			} catch (Exception e) {
-				Log.e("AgendaItem",
-						"Error when reconstructing a line (plugin or app outdated?)",
-						e);
+				Log.e("AgendaItem", "Error when reconstructing a line (plugin or app outdated?)", e);
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			result = prime * result + ((overflow == null) ? 0 : overflow.hashCode());
 			result = prime * result + ((text == null) ? 0 : text.hashCode());
 			result = prime * result + (textBold ? 1231 : 1237);
 			result = prime * result + ((timeDisplay == null) ? 0 : timeDisplay.hashCode());
@@ -101,18 +106,17 @@ public class AgendaItem implements Comparable<AgendaItem> {
 			return result;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
 				return false;
-			if (!(obj instanceof Line))
+			if (getClass() != obj.getClass())
 				return false;
 			Line other = (Line) obj;
+			if (overflow != other.overflow)
+				return false;
 			if (text == null) {
 				if (other.text != null)
 					return false;
