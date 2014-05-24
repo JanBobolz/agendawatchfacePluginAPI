@@ -1,5 +1,6 @@
 package de.janbo.agendawatchface.api;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -12,14 +13,18 @@ import android.util.Log;
  * @author Jan
  * 
  */
-public class AgendaItem implements Comparable<AgendaItem> {
+public class AgendaItem implements Comparable<AgendaItem>, Serializable {
+	private static final long serialVersionUID = 3383848877821500325L;
+
 	/**
 	 * A line of the AgendaItem. Each item consists of up to two lines,
 	 * each line may display a time and/or a text
 	 * @author Jan
 	 *
 	 */
-	public static class Line {
+	public static class Line implements Serializable{
+		private static final long serialVersionUID = 7065587390126384903L;
+
 		/**
 		 * The text for this line. Will be truncated if too long. May be null
 		 */
@@ -288,6 +293,13 @@ public class AgendaItem implements Comparable<AgendaItem> {
 		priority = bundle.containsKey("priority") ? bundle.getInt("priority") : 0;
 		timezone = bundle.containsKey("timezone") ? TimeZone.getTimeZone(bundle.getString("timezone")) : null;
 		pluginId = bundle.containsKey("pluginId") ? bundle.getString("pluginId") : "noId";
+	}
+	
+	/**
+	 * Constructor for serialization
+	 */
+	protected AgendaItem() {
+		
 	}
 
 	/* (non-Javadoc)
